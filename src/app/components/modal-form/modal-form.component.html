@@ -1,0 +1,244 @@
+<div class="modal-background">
+  <mat-card>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-card-title
+        >{{ form.value.name }} &nbsp;
+        <button mat-raised-button (click)="close()" type="button">
+          &times;
+        </button>
+      </mat-card-title>
+
+      <mat-card-content>
+        <div class="fileds-and-radio-wrapper">
+          <div>
+            <mat-form-field appearance="legacy">
+              <mat-label>Name: </mat-label>
+              <input matInput formControlName="name" />
+            </mat-form-field>
+            <br />
+            <mat-form-field appearance="legacy">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description"></textarea>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-radio-group
+              aria-label="Select an option"
+              formControlName="filterMode"
+            >
+              <span>Filter mode:</span>
+              <mat-radio-button value="pass-all" color="primary"
+                >Pass all</mat-radio-button
+              >
+              <mat-radio-button value="pass-by-criteria" color="primary"
+                >Pass by criteria</mat-radio-button
+              >
+              <mat-radio-button value="deny-all" color="primary"
+                >Deny all</mat-radio-button
+              >
+              <mat-radio-button value="deny-by-criteria" color="primary"
+                >Deny by criteria</mat-radio-button
+              >
+            </mat-radio-group>
+          </div>
+        </div>
+
+        <mat-tab-group
+          [selectedIndex]="extCriteries.controls.length - 1"
+          *ngIf="
+            form.value.filterMode === 'deny-by-criteria' ||
+            form.value.filterMode === 'pass-by-criteria'
+          "
+        >
+          <mat-tab
+            *ngFor="let control of extCriteries.controls; let idx = index"
+            [formGroup]="control"
+          >
+            <ng-template mat-tab-label
+              >{{ control.value.criteriaType | titlecase
+              }}<span class="close-tab" (click)="clseTab(idx)"
+                >&times;</span
+              ></ng-template
+            >
+            <mat-radio-group
+              aria-label="Select an option"
+              formControlName="criteriaType"
+              (change)="
+                addAndChangeCriteriesFields(
+                  control.value.criteriaType,
+                  idx,
+                  false
+                )
+              "
+            >
+              <span>Filter mode:</span>
+              <mat-radio-button value="mac" color="primary"
+                >Layer2(0)</mat-radio-button
+              >
+              <mat-radio-button value="ip4" color="primary"
+                >Layer3-7(IPv4)(0)</mat-radio-button
+              >
+              <mat-radio-button value="ip6" color="primary"
+                >IPv6(1)</mat-radio-button
+              >
+              <mat-radio-button
+                value="udb"
+                color="primary"
+                [disabled]="form.get('filterMode').value === 'deny-by-criteria'"
+                >UDB(0)</mat-radio-button
+              >
+            </mat-radio-group>
+            <div
+              class="selected-mac"
+              *ngIf="control.value.criteriaType === 'mac'"
+            >
+              <mat-form-field appearance="legacy">
+                <mat-label>Src Mac: </mat-label>
+                <input matInput formControlName="srcMac" />
+              </mat-form-field>
+
+              <mat-form-field appearance="legacy">
+                <mat-label>Dstc Mac: </mat-label>
+                <input matInput formControlName="dstMac" />
+              </mat-form-field>
+
+              <mat-form-field appearance="legacy">
+                <mat-label>Ethernet type: </mat-label>
+                <input matInput formControlName="ethernetType" />
+              </mat-form-field>
+
+              <mat-form-field appearance="legacy">
+                <mat-label>Valid id: </mat-label>
+                <input matInput formControlName="vlanId" />
+              </mat-form-field>
+              <mat-checkbox formControlName="ipv6" color="primary"
+                >Ipv6 Packet Type</mat-checkbox
+              >
+            </div>
+
+            <div
+              class="selected-udb"
+              *ngIf="control.value.criteriaType === 'udb'"
+            >
+              <mat-form-field>
+                <mat-select formControlName="packetType">
+                  <mat-option value="user-def">
+                    user-def
+                  </mat-option>
+                  <mat-option value="tcp-ip4">
+                    tcp-ip4
+                  </mat-option>
+                  <mat-option value="uudp-ip4">
+                    udp-ip4
+                  </mat-option>
+                  <mat-option value="mpls">
+                    mpls
+                  </mat-option>
+                  <mat-option value="ip4">
+                    ip4
+                  </mat-option>
+                  <mat-option value="frag-ip">
+                    frag-ip
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select formControlName="ofsetBase">
+                  <mat-option value="l2">
+                    l2
+                  </mat-option>
+                  <mat-option value="l3">
+                    l3
+                  </mat-option>
+                  <mat-option value="l4">
+                    l4
+                  </mat-option>
+                  <mat-option value="ip6-ext-hdr">
+                    ip6-ext-hdr
+                  </mat-option>
+                  <mat-option value="ether-type">
+                    ether-type
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div class="udb-options">
+                <div class="udb-ofsets">
+                  Ofsets:
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="addUdbOptions(idx)"
+                    type="button"
+                  >
+                    Add
+                  </button>
+                </div>
+                <div
+                  *ngFor="
+                    let udbConrtol of getUdbOptions(idx).controls;
+                    let udbOptionIdx = index
+                  "
+                  [formGroup]="udbConrtol"
+                >
+                  <mat-form-field appearance="legacy">
+                    <mat-label>Position: </mat-label>
+                    <input matInput formControlName="position" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="legacy">
+                    <mat-label>Value: </mat-label>
+                    <input matInput formControlName="value" />
+                  </mat-form-field>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="removeUdbOptions(idx, udbOptionIdx)"
+                    type="button"
+                  >
+                    &times;
+                  </button>
+                  &nbsp;
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    (click)="resetUdbOptions(idx, udbOptionIdx)"
+                    type="button"
+                  >
+                    reset
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab disabled>
+            <ng-template mat-tab-label>
+              <button
+                mat-button
+                (click)="addAndChangeCriteriesFields()"
+                type="button"
+                color="primary"
+              >
+                +
+              </button>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+          mat-raised-button
+          (click)="close()"
+          color="primary"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit">
+          Save
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>

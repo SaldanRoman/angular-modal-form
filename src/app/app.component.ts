@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'modal-form-material';
+  isModalShow: boolean = false;
+
+  toogleModal() {
+    this.isModalShow = !this.isModalShow;
+  }
 }
