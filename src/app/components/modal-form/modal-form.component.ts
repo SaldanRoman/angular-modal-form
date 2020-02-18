@@ -95,7 +95,10 @@ export class ModalFormComponent implements OnInit {
   }
 
   resetUdbOptions(idx: any, udbOptionIdx: any) {
-    this.getUdbOptions(idx).controls[udbOptionIdx].reset();
+    this.getUdbOptions(idx).controls[udbOptionIdx].setValue({
+      position: 0,
+      value: 0
+    });
   }
 
   submit() {
