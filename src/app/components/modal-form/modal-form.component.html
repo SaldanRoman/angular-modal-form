@@ -211,6 +211,156 @@
                 </div>
               </div>
             </div>
+
+            <div
+              class="selected-ip4"
+              *ngIf="control.value.criteriaType === 'ip4'"
+            >
+              <mat-form-field>
+                <mat-select
+                  formControlName="packetType"
+                  #ip4selected
+                  (selectionChange)="
+                    showip4ChosenOptions(ip4selected.value, idx)
+                  "
+                >
+                  <mat-option value="icmp">
+                    ICMP
+                  </mat-option>
+                  <mat-option value="ip">
+                    IP
+                  </mat-option>
+                  <mat-option value="tcp">
+                    TCP
+                  </mat-option>
+                  <mat-option value="udp">
+                    UDP
+                  </mat-option>
+                  <mat-option value="sctp">
+                    SCTP
+                  </mat-option>
+                  <mat-option value="gpt-control">
+                    GPT-Control
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <br />
+              <mat-form-field appearance="legacy">
+                <mat-label>Valid id: </mat-label>
+                <input matInput formControlName="vlanId" />
+              </mat-form-field>
+
+              <mat-radio-group
+                *ngIf="control.value.packetType === 'gpt-control'"
+                aria-label="Select an option"
+                formControlName="version"
+              >
+                <span>Version:</span>
+                <mat-radio-button value="v1" color="primary"
+                  >V1</mat-radio-button
+                >
+                <mat-radio-button value="v2" color="primary"
+                  >V2</mat-radio-button
+                >
+              </mat-radio-group>
+              <br />
+
+              <div
+                class="selected-ip4-icmp"
+                *ngIf="control.value.packetType !== 'gpt-control'"
+              >
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Ip *: </mat-label>
+                  <input matInput formControlName="dstIp" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Mask *: </mat-label>
+                  <input matInput formControlName="dstMask" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Ip *: </mat-label>
+                  <input matInput formControlName="srcIp" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Mask *: </mat-label>
+                  <input matInput formControlName="scrMask" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Ip Protocol *: </mat-label>
+                  <input matInput formControlName="ipProtocol" />
+                </mat-form-field>
+              </div>
+
+              <mat-form-field
+                *ngIf="
+                  control.value.packetType !== 'icmp' &&
+                  control.value.packetType !== 'gpt-control'
+                "
+              >
+                <mat-label>IP Fragmentation</mat-label>
+                <mat-select formControlName="ip">
+                  <mat-option value="none">
+                    none
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <br />
+              <div
+                class="selected-ip4-udp"
+                *ngIf="
+                  control.value.packetType !== 'gpt-control' &&
+                  control.value.packetType !== 'icmp' &&
+                  control.value.packetType !== 'ip'
+                "
+              >
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Mini Port *: </mat-label>
+                  <input matInput formControlName="sourceMiniPort" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Max Port *: </mat-label>
+                  <input matInput formControlName="sourceMaxPort" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Mini Port *: </mat-label>
+                  <input matInput formControlName="destinationMiniPort" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Max Port *: </mat-label>
+                  <input matInput formControlName="destinationMaxPort" />
+                </mat-form-field>
+              </div>
+              <br />
+              <div
+                class="selected-ip4-tcp"
+                [formGroup]="control.controls.tcpControl"
+                *ngIf="
+                  control.value.packetType === 'tcp' &&
+                  control.value.packetType !== 'gpt-control'
+                "
+              >
+                <mat-checkbox formControlName="urg" color="primary"
+                  >URG</mat-checkbox
+                >
+                &nbsp;
+                <mat-checkbox formControlName="ack" color="primary"
+                  >ACK</mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="psh" color="primary"
+                  >PSH </mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="rst" color="primary"
+                  >RST</mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="syn" color="primary"
+                  >SYN</mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="fin" color="primary"
+                  >FIN</mat-checkbox
+                >
+              </div>
+              <br />
+            </div>
           </mat-tab>
           <mat-tab disabled>
             <ng-template mat-tab-label>

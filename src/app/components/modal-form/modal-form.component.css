@@ -16,7 +16,7 @@
 }
 
 form {
-  width: 600px;
+  width: 550px;
   max-height: 500px;
   display: flex;
   flex-direction: column;
@@ -51,6 +51,10 @@ hr {
 
 .mat-radio-button {
   margin: 5px;
+}
+
+.mat-tab-body-content {
+  overflow: hidden;
 }
 
 .close-tab {

@@ -12,6 +12,14 @@ export class ModalFormComponent implements OnInit {
   constructor() {}
 
   form: FormGroup;
+  tcpControl: FormGroup = new FormGroup({
+    urg: new FormControl(false),
+    ack: new FormControl(false),
+    psh: new FormControl(false),
+    rst: new FormControl(false),
+    syn: new FormControl(false),
+    fin: new FormControl(false)
+  });
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -36,15 +44,6 @@ export class ModalFormComponent implements OnInit {
           ipv6: new FormControl(false)
         });
         break;
-      case 'ip4':
-        criteriesGroup = new FormGroup({
-          criteriaType: new FormControl('ip4'),
-          srcMac: new FormControl('22:22:00:00:00:00'),
-          dstMac: new FormControl('00:00:00:00:00:00'),
-          ethernetType: new FormControl('0'),
-          vlanId: new FormControl('0')
-        });
-        break;
       case 'udb':
         criteriesGroup = new FormGroup({
           criteriaType: new FormControl('udb'),
@@ -58,15 +57,42 @@ export class ModalFormComponent implements OnInit {
           ])
         });
         break;
+      case 'ip4':
+        criteriesGroup = new FormGroup({
+          criteriaType: new FormControl('ip4'),
+          packetType: new FormControl('icmp', Validators.required),
+          dstIp: new FormControl('0.0.0.0', Validators.required),
+          dstMask: new FormControl('0.0.0.0', Validators.required),
+          ipProtocol: new FormControl('0x0', Validators.required),
+          srcIp: new FormControl('0.0.0.0', Validators.required),
+          scrMask: new FormControl('0.0.0.0', Validators.required),
+          sourceMiniPort: new FormControl('0', Validators.required),
+          sourceMaxPort: new FormControl('65535', Validators.required),
+          destinationMiniPort: new FormControl('0', Validators.required),
+          destinationMaxPort: new FormControl('65535', Validators.required),
+          vlanId: new FormControl('0', Validators.required),
+          tcpControl: new FormGroup({
+            urg: new FormControl(true),
+            ack: new FormControl(false),
+            psh: new FormControl(false),
+            rst: new FormControl(false),
+            syn: new FormControl(false),
+            fin: new FormControl(false)
+          }),
+          ip: new FormControl('none'),
+          version: new FormControl('v1')
+        });
+        criteriesGroup.controls.tcpControl.disable();
+        criteriesGroup.controls.ip.disable();
+        break;
     }
 
     if (isNew) {
-      (this.form.get('ext') as FormArray).push(criteriesGroup);
+      this.extCriteries.push(criteriesGroup);
       return;
     }
 
-    (this.form.get('ext') as FormArray).controls[idx] = criteriesGroup;
-    // (this.form.get('ext') as FormArray).updateValueAndValidity();
+    this.extCriteries.controls[idx] = criteriesGroup;
   }
 
   get extCriteries() {
@@ -74,9 +100,7 @@ export class ModalFormComponent implements OnInit {
   }
 
   getUdbOptions(idx: any) {
-    return (this.form.get('ext') as FormArray).controls[idx].get(
-      'ofsets'
-    ) as FormArray;
+    return this.extCriteries.controls[idx].get('ofsets') as FormArray;
   }
 
   addUdbOptions(idx: any) {
@@ -102,18 +126,31 @@ export class ModalFormComponent implements OnInit {
   }
 
   submit() {
-    (this.form.get('ext') as FormArray).updateValueAndValidity();
+    this.extCriteries.updateValueAndValidity();
     console.log(this.form.value);
   }
 
   clseTab(idx: number) {
-    if ((this.form.get('ext') as FormArray).controls.length < 2) {
+    if (this.extCriteries.controls.length < 2) {
       return;
     }
-    (this.form.get('ext') as FormArray).removeAt(idx);
+    this.extCriteries.removeAt(idx);
   }
 
   close() {
     this.closeModal.emit();
+  }
+
+  showTcpControl(idx: any) {
+    this.extCriteries.controls[idx].get('tcpControl').enable();
+  }
+
+  showip4ChosenOptions(value, idx) {
+    value === 'tcp'
+      ? this.extCriteries.controls[idx].get('tcpControl').enable()
+      : this.extCriteries.controls[idx].get('tcpControl').disable();
+    value !== 'icmp'
+      ? this.extCriteries.controls[idx].get('ip').enable()
+      : this.extCriteries.controls[idx].get('ip').disable();
   }
 }
