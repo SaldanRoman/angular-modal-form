@@ -359,7 +359,147 @@
                   >FIN</mat-checkbox
                 >
               </div>
+            </div>
+            <br />
+            <div
+              class="selected-ip6"
+              *ngIf="control.value.criteriaType === 'ip6'"
+            >
+              <mat-form-field>
+                <mat-select
+                  formControlName="packetType"
+                  #ip4selected
+                  (selectionChange)="
+                    showip4ChosenOptions(ip4selected.value, idx)
+                  "
+                >
+                  <mat-option value="icmp">
+                    ICMP
+                  </mat-option>
+                  <mat-option value="ip6">
+                    IPv6
+                  </mat-option>
+                  <mat-option value="tcp">
+                    TCP
+                  </mat-option>
+                  <mat-option value="udp">
+                    UDP
+                  </mat-option>
+                  <mat-option value="sctp">
+                    SCTP
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
               <br />
+              <mat-form-field appearance="legacy">
+                <mat-label>Valid id: </mat-label>
+                <input matInput formControlName="vlanId" />
+              </mat-form-field>
+              <mat-form-field
+                appearance="legacy"
+                *ngIf="
+                  control.value.packetType === 'ip6' ||
+                  control.value.packetType === 'icmp'
+                "
+              >
+                <mat-label>Flow Label *</mat-label>
+                <input matInput formControlName="flowLabel" />
+              </mat-form-field>
+
+              <div
+                class="select-ip6-tcp"
+                *ngIf="
+                  control.value.packetType === 'tcp' ||
+                  control.value.packetType === 'udp' ||
+                  control.value.packetType === 'sctp'
+                "
+              >
+                <mat-form-field>
+                  <mat-label>DSCP: </mat-label>
+                  <mat-select formControlName="dscp">
+                    <mat-option value="none">None </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>TOS: </mat-label>
+                  <mat-select formControlName="tos">
+                    <mat-option value="none"> None </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <br />
+              <div
+                class="selected-ip6-udp"
+                *ngIf="
+                  control.value.packetType === 'tcp' ||
+                  control.value.packetType === 'udp' ||
+                  control.value.packetType === 'sctp'
+                "
+              >
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Mini Port *: </mat-label>
+                  <input matInput formControlName="sourceMiniPort" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Max Port *: </mat-label>
+                  <input matInput formControlName="sourceMaxPort" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Mini Port *: </mat-label>
+                  <input matInput formControlName="destinationMiniPort" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Max Port *: </mat-label>
+                  <input matInput formControlName="destinationMaxPort" />
+                </mat-form-field>
+              </div>
+              <br />
+              <div
+                class="selected-ip6-tcp"
+                [formGroup]="control.controls.tcpControl"
+                *ngIf="control.value.packetType === 'tcp'"
+              >
+                <p>TCP Control</p>
+                <br />
+                <mat-checkbox formControlName="urg" color="primary"
+                  >URG</mat-checkbox
+                >
+                &nbsp;
+                <mat-checkbox formControlName="ack" color="primary"
+                  >ACK</mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="psh" color="primary"
+                  >PSH </mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="rst" color="primary"
+                  >RST</mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="syn" color="primary"
+                  >SYN</mat-checkbox
+                >&nbsp;
+                <mat-checkbox formControlName="fin" color="primary"
+                  >FIN</mat-checkbox
+                >
+              </div>
+              <br />
+              <div class="selected-ip6-icmp">
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Ip *: </mat-label>
+                  <input matInput formControlName="dstIp" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Destination Mask *: </mat-label>
+                  <input matInput formControlName="dstMask" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Ip *: </mat-label>
+                  <input matInput formControlName="srcIp" />
+                </mat-form-field>
+                <mat-form-field appearance="legacy">
+                  <mat-label>Source Mask *: </mat-label>
+                  <input matInput formControlName="scrMask" />
+                </mat-form-field>
+              </div>
             </div>
           </mat-tab>
           <mat-tab disabled>

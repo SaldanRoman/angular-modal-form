@@ -85,6 +85,44 @@ export class ModalFormComponent implements OnInit {
         criteriesGroup.controls.tcpControl.disable();
         criteriesGroup.controls.ip.disable();
         break;
+      case 'ip6':
+        criteriesGroup = new FormGroup({
+          criteriaType: new FormControl('ip6'),
+          packetType: new FormControl('tcp', Validators.required),
+          vlanId: new FormControl('0', Validators.required),
+          dscp: new FormControl('none'),
+          tos: new FormControl('none'),
+          flowLabel: new FormControl('0', Validators.required),
+          srcIp: new FormControl(
+            '0000:0000:0000:0000:0000:0000:0000',
+            Validators.required
+          ),
+          scrMask: new FormControl(
+            '0000:0000:0000:0000:0000:0000:0000',
+            Validators.required
+          ),
+          dstIp: new FormControl(
+            '0000:0000:0000:0000:0000:0000:0000',
+            Validators.required
+          ),
+          dstMask: new FormControl(
+            '0000:0000:0000:0000:0000:0000:0000',
+            Validators.required
+          ),
+          sourceMiniPort: new FormControl('0', Validators.required),
+          sourceMaxPort: new FormControl('65535', Validators.required),
+          destinationMiniPort: new FormControl('0', Validators.required),
+          destinationMaxPort: new FormControl('65535', Validators.required),
+          tcpControl: new FormGroup({
+            urg: new FormControl(false),
+            ack: new FormControl(false),
+            psh: new FormControl(false),
+            rst: new FormControl(false),
+            syn: new FormControl(false),
+            fin: new FormControl(false)
+          })
+        });
+        break;
     }
 
     if (isNew) {
@@ -149,8 +187,5 @@ export class ModalFormComponent implements OnInit {
     value === 'tcp'
       ? this.extCriteries.controls[idx].get('tcpControl').enable()
       : this.extCriteries.controls[idx].get('tcpControl').disable();
-    value !== 'icmp'
-      ? this.extCriteries.controls[idx].get('ip').enable()
-      : this.extCriteries.controls[idx].get('ip').disable();
   }
 }
