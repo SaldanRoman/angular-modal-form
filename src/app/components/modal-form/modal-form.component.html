@@ -25,6 +25,7 @@
             <mat-radio-group
               aria-label="Select an option"
               formControlName="filterMode"
+              (change)="toogleExt()"
             >
               <span>Filter mode:</span>
               <mat-radio-button value="pass-all" color="primary"
@@ -220,9 +221,7 @@
                 <mat-select
                   formControlName="packetType"
                   #ip4selected
-                  (selectionChange)="
-                    showip4ChosenOptions(ip4selected.value, idx)
-                  "
+                  (selectionChange)="showTcpControl(ip4selected.value, idx)"
                 >
                   <mat-option value="icmp">
                     ICMP
@@ -369,9 +368,7 @@
                 <mat-select
                   formControlName="packetType"
                   #ip4selected
-                  (selectionChange)="
-                    showip4ChosenOptions(ip4selected.value, idx)
-                  "
+                  (selectionChange)="showTcpControl(ip4selected.value, idx)"
                 >
                   <mat-option value="icmp">
                     ICMP
@@ -525,7 +522,12 @@
         >
           Cancel
         </button>
-        <button mat-raised-button color="primary" type="submit">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid"
+        >
           Save
         </button>
       </mat-card-actions>

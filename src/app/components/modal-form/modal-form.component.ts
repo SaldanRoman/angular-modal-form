@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-modal-form',
@@ -7,33 +8,20 @@ import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
   styleUrls: ['./modal-form.component.css']
 })
 export class ModalFormComponent implements OnInit {
+  @Input() formFromApp: FormGroup;
   @Output() closeModal: EventEmitter<void> = new EventEmitter();
+  @Output() outForm: EventEmitter<FormGroup> = new EventEmitter();
 
   constructor() {}
-  test = {
-    name: 'New filter',
-    description: '',
-    filterMode: 'pass-by-criteria',
-    ext: [
-      {
-        criteriaType: 'udb',
-        packetType: 'user-def',
-        ofsetBase: 'l2',
-        ofsets: [{ position: '0', value: '0' }]
-      }
-    ]
-  };
+
   form: FormGroup;
-  tcpControl: FormGroup = new FormGroup({
-    urg: new FormControl(false),
-    ack: new FormControl(false),
-    psh: new FormControl(false),
-    rst: new FormControl(false),
-    syn: new FormControl(false),
-    fin: new FormControl(false)
-  });
 
   ngOnInit() {
+    if (this.formFromApp) {
+      this.form = this.formFromApp;
+      return;
+    }
+
     this.form = new FormGroup({
       name: new FormControl('New filter', Validators.required),
       description: new FormControl('', Validators.required),
@@ -41,6 +29,9 @@ export class ModalFormComponent implements OnInit {
       ext: new FormArray([])
     });
     this.addAndChangeCriteriesFields();
+    this.form.valueChanges.subscribe(snap => {
+      this.tolocal();
+    });
   }
 
   addAndChangeCriteriesFields(ctrType = 'mac', idx = 0, isNew = true) {
@@ -95,7 +86,6 @@ export class ModalFormComponent implements OnInit {
           version: new FormControl('v1')
         });
         criteriesGroup.controls.tcpControl.disable();
-        criteriesGroup.controls.ip.disable();
         break;
       case 'ip6':
         criteriesGroup = new FormGroup({
@@ -145,6 +135,17 @@ export class ModalFormComponent implements OnInit {
     this.extCriteries.controls[idx] = criteriesGroup;
   }
 
+  toogleExt() {
+    if (
+      this.form.value.filterMode === 'pass-all' ||
+      this.form.value.filterMode === 'deny-all'
+    ) {
+      this.extCriteries.disable();
+    } else {
+      this.extCriteries.enable();
+    }
+  }
+
   get extCriteries() {
     return this.form.get('ext') as FormArray;
   }
@@ -176,6 +177,7 @@ export class ModalFormComponent implements OnInit {
   }
 
   submit() {
+    this.toogleExt();
     this.extCriteries.updateValueAndValidity();
     console.log(this.form.value);
   }
@@ -191,13 +193,13 @@ export class ModalFormComponent implements OnInit {
     this.closeModal.emit();
   }
 
-  showTcpControl(idx: any) {
-    this.extCriteries.controls[idx].get('tcpControl').enable();
-  }
-
-  showip4ChosenOptions(value, idx) {
+  showTcpControl(value, idx) {
     value === 'tcp'
       ? this.extCriteries.controls[idx].get('tcpControl').enable()
       : this.extCriteries.controls[idx].get('tcpControl').disable();
+  }
+
+  tolocal() {
+    this.outForm.emit(this.form);
   }
 }
