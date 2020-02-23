@@ -10,7 +10,19 @@ export class ModalFormComponent implements OnInit {
   @Output() closeModal: EventEmitter<void> = new EventEmitter();
 
   constructor() {}
-
+  test = {
+    name: 'New filter',
+    description: '',
+    filterMode: 'pass-by-criteria',
+    ext: [
+      {
+        criteriaType: 'udb',
+        packetType: 'user-def',
+        ofsetBase: 'l2',
+        ofsets: [{ position: '0', value: '0' }]
+      }
+    ]
+  };
   form: FormGroup;
   tcpControl: FormGroup = new FormGroup({
     urg: new FormControl(false),
