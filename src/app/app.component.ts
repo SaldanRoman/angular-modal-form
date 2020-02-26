@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
 
   title = 'modal-form-material';
   isModalShow: boolean = false;
-  fromFormToApp(event) {
+  fromFormToApp(event: FormGroup) {
     this.directForm = event;
   }
   toogleModal() {

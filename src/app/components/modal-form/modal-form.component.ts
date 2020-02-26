@@ -34,7 +34,7 @@ export class ModalFormComponent implements OnInit {
   }
 
   addAndChangeCriteriesFields(ctrType = 'mac', idx = 0, isNew = true) {
-    let criteriesGroup: any;
+    let criteriesGroup: FormGroup;
     switch (ctrType) {
       case 'mac':
         criteriesGroup = new FormGroup({
@@ -149,11 +149,11 @@ export class ModalFormComponent implements OnInit {
     return this.form.get('ext') as FormArray;
   }
 
-  getUdbOptions(idx: any) {
+  getUdbOptions(idx: number) {
     return this.extCriteries.controls[idx].get('ofsets') as FormArray;
   }
 
-  addUdbOptions(idx: any) {
+  addUdbOptions(idx: number) {
     const filed = new FormGroup({
       position: new FormControl('0', Validators.required),
       value: new FormControl('0', Validators.required)
@@ -161,14 +161,14 @@ export class ModalFormComponent implements OnInit {
     this.getUdbOptions(idx).push(filed);
   }
 
-  removeUdbOptions(idx: any, udbOptionIdx: any) {
+  removeUdbOptions(idx: number, udbOptionIdx: number) {
     if (this.getUdbOptions(idx).length <= 1) {
       return;
     }
     this.getUdbOptions(idx).removeAt(udbOptionIdx);
   }
 
-  resetUdbOptions(idx: any, udbOptionIdx: any) {
+  resetUdbOptions(idx: number, udbOptionIdx: number) {
     this.getUdbOptions(idx).controls[udbOptionIdx].setValue({
       position: 0,
       value: 0
@@ -192,7 +192,7 @@ export class ModalFormComponent implements OnInit {
     this.closeModal.emit();
   }
 
-  showTcpControl(value, idx) {
+  showTcpControl(value: string, idx: number) {
     value === 'tcp'
       ? this.extCriteries.controls[idx].get('tcpControl').enable()
       : this.extCriteries.controls[idx].get('tcpControl').disable();
